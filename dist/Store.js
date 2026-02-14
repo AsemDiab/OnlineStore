@@ -47,14 +47,6 @@ export class Store {
     calculateTotal(cart) {
         return Object.values(cart.cartContent).reduce((total, record) => total + record.product.price * record.qty, 0);
     }
-    processCheckout(cart, payment, total) {
-        Object.values(cart.cartContent).forEach((record) => {
-            this.removeFromInventory(record.product, record.qty);
-        });
-        cart.clearCart();
-        payment.pay(total);
-        console.log("Checkout succeeded");
-    }
     addToCart(product, qty) {
         if (!product)
             throw new Error("product and quantity shouldn't be null or undefined");

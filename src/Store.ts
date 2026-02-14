@@ -75,16 +75,6 @@ export class Store {
     );
   }
 
-  private processCheckout(cart: Cart, payment: Payment, total: number): void {
-    Object.values(cart.cartContent).forEach((record) => {
-      this.removeFromInventory(record.product, record.qty);
-    });
-
-    cart.clearCart();
-    payment.pay(total);
-    console.log("Checkout succeeded");
-  }
-
   addToCart(product: Product, qty: number): boolean {
     if (!product)
       throw new Error("product and quantity shouldn't be null or undefined");

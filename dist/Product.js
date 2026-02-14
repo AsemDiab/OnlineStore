@@ -1,13 +1,12 @@
 export class Product {
-    constructor(_name = "", _price = 0) {
-        this.validatePrice(_price);
+    constructor(_name = "", _price = 0, priceValidator) {
+        if (!priceValidator)
+            throw new Error("the priceValidator shouldn't be null or undefiend");
+        if (!priceValidator.validate(_price))
+            throw new Error("the price should be positive");
         this._name = _name;
         this._price = _price;
         this._id = Product.productsCreated++;
-    }
-    validatePrice(price) {
-        if (price <= 0)
-            throw new Error("the price should be positive");
     }
     get name() {
         return this._name;
