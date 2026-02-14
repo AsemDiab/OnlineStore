@@ -1,15 +1,12 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.Product = void 0;
-class Product {
+export class Product {
     constructor(_name = "", _price = 0) {
-        this.validatePrice(this.price);
+        this.validatePrice(_price);
         this._name = _name;
         this._price = _price;
-        this._id = Product.productCreated++;
+        this._id = Product.productsCreated++;
     }
     validatePrice(price) {
-        if (price < 0)
+        if (price <= 0)
             throw new Error("the price should be positive");
     }
     get name() {
@@ -23,10 +20,10 @@ class Product {
     }
     getInfo() {
         return {
+            id: this.id,
             name: this.name,
             price: this.price,
         };
     }
 }
-exports.Product = Product;
-Product.productCreated = 0;
+Product.productsCreated = 0;

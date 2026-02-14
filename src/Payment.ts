@@ -1,6 +1,7 @@
-export abstract class Payment{
-  abstract pay(amount:number):void 
-  abstract checkBalanceAvailability (amount:number):boolean
+export interface  Payment{
+   pay(amount:number):void 
+   checkBalanceAvailability (amount:number):boolean
+
 }
 
 

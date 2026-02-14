@@ -1,8 +1,4 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.CreditCard = exports.CardInfo = void 0;
-const Payment_1 = require("./Payment");
-class CardInfo {
+export class CreditCardInfo {
     constructor(cardNumber = "", holderName = "", expirationDate = new Date(), CVC = "") {
         this.cardNumber = "";
         this.holderName = "";
@@ -14,17 +10,19 @@ class CardInfo {
         this.CVC = CVC;
     }
     getHolderName() { return this.holderName; }
+    getCardNumber() { return this.cardNumber; }
+    getExpirationDate() { return this.expirationDate; }
+    getCVC() { return this.CVC; }
 }
-exports.CardInfo = CardInfo;
-class CreditCard extends Payment_1.Payment {
+export class CreditCard {
     constructor(cardInfo, balance) {
-        super();
         this.balance = 0;
+        this.validateBalance(balance);
         this.cardInfo = cardInfo;
         this.balance = balance;
     }
     validateBalance(balance) {
-        if (balance < 0)
+        if (balance <= 0)
             throw new Error("the balance should be positive");
     }
     checkBalanceAvailability(amount) {
@@ -34,5 +32,6 @@ class CreditCard extends Payment_1.Payment {
         console.log("paying via card with holder name " + this.cardInfo.getHolderName());
         this.balance -= amount;
     }
+    getBalance() { return this.balance; }
+    setBalance(balance) { this.validateBalance(balance); }
 }
-exports.CreditCard = CreditCard;

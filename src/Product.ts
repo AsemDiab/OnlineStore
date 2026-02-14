@@ -1,18 +1,18 @@
 export class Product {
-  private static productCreated: number = 0;
+  private static productsCreated: number = 0;
   private _name: string;
   private _price: number;
   private _id: number;
 
   constructor(_name: string = "", _price: number = 0) {
-    this.validatePrice(this.price);
+    this.validatePrice(_price);
     this._name = _name;
     this._price = _price;
-    this._id = Product.productCreated++;
+    this._id = Product.productsCreated++;
   }
 
-  validatePrice(price: number): void {
-    if (price < 0) throw new Error("the price should be positive");
+  private validatePrice(price: number): void {
+    if (price <= 0) throw new Error("the price should be positive");
   }
 
   get name(): string {
@@ -26,8 +26,9 @@ export class Product {
     return this._id;
   }
 
-  getInfo() {
+  getInfo():{id:number,name:string,price:number} {
     return {
+      id: this.id,
       name: this.name,
       price: this.price,
     };

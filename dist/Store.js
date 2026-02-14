@@ -1,11 +1,8 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.Store = void 0;
-const Inventory_1 = require("./Inventory");
-class Store {
-    constructor() {
-        this.inventory = new Inventory_1.Inventory();
+export class Store {
+    constructor(cart, inventory) {
+        this.inventory = inventory;
         this.users = [];
+        this.cart = cart;
     }
     addToInventory(product, qty) {
         this.inventory.addToInventory(product, qty);
@@ -20,31 +17,66 @@ class Store {
         this.users.push(user);
         return true;
     }
-    checkout(cart, payment) {
-        const cartContent = cart.cartContent;
-        let total = 0;
-        let isAvalible = true;
-        Object.values(cartContent).forEach(record => {
-            isAvalible && (isAvalible = this.inventory.checkAvailability(record.product, record.qty));
-            total += record.product.price * record.qty;
-            if (!this.inventory.checkAvailability(record.product, record.qty))
-                console.log(`**the count of ${record.product.name} in inventory is less than ${record.qty} `);
+    validateInventoryAvailability(cart) {
+        const issues = [];
+        Object.values(cart.cartContent).forEach((record) => {
+            if (!this.inventory.checkAvailability(record.product, record.qty)) {
+                issues.push(`**the count of ${record.product.name} in inventory is less than ${record.qty}`);
+            }
         });
-        if (!isAvalible) {
-            console.log("One or more products are not available in inventory");
-            return;
+        return { isValid: issues.length === 0, issues };
+    }
+    checkout(payment) {
+        const cartContent = this.cart.cartContent;
+        const { isValid, issues } = this.validateInventoryAvailability(this.cart);
+        if (!isValid) {
+            throw new Error("One or more products are not available in inventory");
         }
+        const total = this.calculateTotal(this.cart);
         if (!payment.checkBalanceAvailability(total)) {
-            console.log("The total is larger than money that you have");
-            return;
+            throw new Error("The total is larger than money that you have");
         }
         else
             console.log("Checkout succeeded");
-        Object.values(cartContent).forEach(record => {
+        Object.values(cartContent).forEach((record) => {
+            this.removeFromInventory(record.product, record.qty);
+        });
+        this.cart.clearCart();
+        payment.pay(total);
+    }
+    calculateTotal(cart) {
+        return Object.values(cart.cartContent).reduce((total, record) => total + record.product.price * record.qty, 0);
+    }
+    processCheckout(cart, payment, total) {
+        Object.values(cart.cartContent).forEach((record) => {
             this.removeFromInventory(record.product, record.qty);
         });
         cart.clearCart();
         payment.pay(total);
+        console.log("Checkout succeeded");
+    }
+    addToCart(product, qty) {
+        if (!product)
+            throw new Error("product and quantity shouldn't be null or undefined");
+        if (!this.inventory.checkAvailability(product, qty ?? 0)) {
+            throw new Error(`should not add to cart when inventory unavailable`);
+        }
+        return this.cart.addToCart(product, qty);
+    }
+    removeFromCart(product, qty) {
+        if (!product || !qty)
+            throw new Error("product and quntity shouldn't to be null or undefined");
+        if (!this.cart.cartContent[product.id]) {
+            console.log(`**the product ${product.name} is not in cart`);
+            return false;
+        }
+        if (this.cart.cartContent[product.id].qty < qty) {
+            console.log(`**the quantity of ${product.name} in cart is less than ${qty}`);
+            return false;
+        }
+        return this.cart.removeFromCart(product, qty);
+    }
+    clearCart() {
+        return this.cart.clearCart();
     }
 }
-exports.Store = Store;

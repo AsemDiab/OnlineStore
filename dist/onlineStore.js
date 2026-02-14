@@ -1,25 +1,25 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const Store_1 = require("./Store");
-const Product_1 = require("./Product");
-const Cart_1 = require("./Cart");
-const CreditCard_1 = require("./CreditCard");
+import { Store } from "./Store.js";
+import { Product } from "./Product.js";
+import { Cart, displayCart } from "./Cart.js";
+import { CreditCardInfo, CreditCard } from "./CreditCard.js";
+import { QuantityValidator } from "./QuantityValidator.js";
+import { Inventory } from "./Inventory.js";
 try {
-    const store = new Store_1.Store();
-    const Iphone15 = new Product_1.Product("Iphone15", 500);
-    const ds554HV = new Product_1.Product("ds554HV", 15);
-    const Mouse = new Product_1.Product("MArvo Mouse", 5);
-    store.addToInventory(Iphone15, 3);
-    store.addToInventory(ds554HV, 5);
-    store.addToInventory(Mouse, 2);
-    const cart = new Cart_1.Cart();
+    const cart = new Cart(new QuantityValidator());
+    const user1 = new Store(cart, new Inventory(new QuantityValidator()));
+    const Iphone15 = new Product("Iphone15", 500);
+    const ds554HV = new Product("ds554HV", 15);
+    const Mouse = new Product("MArvo Mouse", 5);
+    user1.addToInventory(Iphone15, 3);
+    user1.addToInventory(ds554HV, 5);
+    user1.addToInventory(Mouse, 2);
     cart.addToCart(Iphone15, 20);
-    const cardInfo = new CreditCard_1.CardInfo("4242 4242 4242 4242", "Asem Diab", new Date(2026, 11, 5), "123");
-    const card = new CreditCard_1.CreditCard(cardInfo, 1000);
-    (0, Cart_1.displayCart)(cart.cartContent);
-    store.checkout(cart, card);
-    (0, Cart_1.displayCart)(cart.cartContent);
+    const cardInfo = new CreditCardInfo("4242 4242 4242 4242", "Asem Diab", new Date(2026, 11, 5), "123");
+    const card = new CreditCard(cardInfo, 1000);
+    displayCart(cart.cartContent);
+    user1.checkout(card);
+    displayCart(cart.cartContent);
 }
-catch (_a) {
+catch {
     console.error("an Error caught");
 }

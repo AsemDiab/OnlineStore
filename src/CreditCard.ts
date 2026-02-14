@@ -1,6 +1,7 @@
 import { Payment } from "./Payment.js"
 
-export class CardInfo{
+
+export class CreditCardInfo{
   private cardNumber:string=""
   private holderName:string=""
   private expirationDate:Date=new Date()
@@ -15,19 +16,22 @@ export class CardInfo{
 
 
   public getHolderName():string{return this.holderName}
+  public getCardNumber():string{return this.cardNumber}
+  public getExpirationDate():Date{return this.expirationDate}
+  public getCVC():string{return this.CVC}
 }
 
 
-export class CreditCard extends Payment{
-  private cardInfo:CardInfo;
-  private balance:number=0
-  constructor(cardInfo:CardInfo,balance:number){
-    super()
+export class CreditCard implements Payment{
+  private cardInfo:CreditCardInfo;
+  private balance:number=0;
+  constructor(cardInfo:CreditCardInfo,balance:number){
+    this.validateBalance(balance)
     this.cardInfo=cardInfo
     this.balance=balance
   }
   validateBalance(balance:number){
-    if(balance<0) throw new Error("the balance should be positive");
+    if(balance<=0) throw new Error("the balance should be positive");
   }
   checkBalanceAvailability (amount:number):boolean{
      return(amount<=this.balance)
@@ -37,4 +41,8 @@ export class CreditCard extends Payment{
     this.balance-=amount
    
   }
+  getBalance():number{return this.balance}
+  setBalance(balance:number){this.validateBalance(balance)}
+
+
 }

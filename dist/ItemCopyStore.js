@@ -1,7 +1,4 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.ItemCopyStore = void 0;
-class ItemCopyStore {
+export class ItemCopyStore {
     constructor(id = 0) {
         this.productId = id;
     }
@@ -9,4 +6,3 @@ class ItemCopyStore {
         return true;
     }
 }
-exports.ItemCopyStore = ItemCopyStore;

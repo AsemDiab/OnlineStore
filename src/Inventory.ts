@@ -1,48 +1,55 @@
-import { ItemCopyStore } from "./ItemCopyStore.js";
+import { NumericalValidator } from "./NumericalValidator.js";
 import { Product } from "./Product.js";
-import { deleteFromArray } from "./utils.js";
-
 export class Inventory {
-  private inventory: Product[];
-
-  validateQuantity(quantity:number):boolean{
-    if(quantity<0)throw new Error("the quantity should be positive");
-
-    return true
+  private inventory: Map<number, {product:Product,qty:number}>;
+  private quantityValidator: NumericalValidator;
+  
+  constructor(quantityValidator: NumericalValidator) {
+    this.inventory = new Map<number, {product:Product,qty:number}>();
+    this.quantityValidator = quantityValidator;
   }
-  constructor() {
-    this.inventory = [];
+
+  private setQuantity(product: Product, qty: number): void {
+    if (qty === 0) {
+      this.inventory.delete(product.id);
+    } else {
+      this.inventory.set(product.id,{product,qty});
+    }
   }
   addToInventory(product: Product, qty: number): boolean {
-        this.validateQuantity(qty)
+        if(!this.quantityValidator.validate(qty)) throw new Error("the quantity should be positive");
 
-    for (let i = 0; i < qty; i++) this.inventory.push(product);
+    this.setQuantity(product, this.getCount(product) + qty);
     return true;
   }
   removeFromInventory(product: Product, qty: number): boolean {
-        this.validateQuantity(qty)
+    if(!this.quantityValidator.validate(qty)) throw new Error("the quantity should be positive");
 
-    const isAvalible = this.checkAvailability(product, qty);
-    if (!isAvalible){ 
-      
-      console.log(
+    if (!this.checkAvailability(product, qty)) {
+      throw new Error(
         "The needed quantity is larger than the quantity in inventory",
       );
-      return false;
     }
-    for (let i = 0; i < qty; i++) deleteFromArray(product, this.inventory);
 
+    this.setQuantity(product, this.getCount(product) - qty);
     return true;
   }
+
+  getCount(product: Product): number {
+    return this.inventory.get(product.id)?.qty ?? 0;
+  }
+
   checkAvailability(product: Product, qty: number): boolean {
-    this.validateQuantity(qty)
-    const qtyInInventory = this.inventory.filter(
-      (item) => product.id == item.id,
-    ).length;
-    if (qty > qtyInInventory) return false;
+        if(!this.quantityValidator.validate(qty)) throw new Error("the quantity should be positive");
+
+    if (qty > this.getCount(product)) return false;
     return true;
   }
-  get inventoryContent():Product[]{
-    return this.inventory
+
+  get inventoryContent(): { product: Product; qty: number }[] {
+    return Array.from(this.inventory.entries()).map(([id,{product,qty}]) => ({
+      product,
+      qty,
+    }));
   }
 }

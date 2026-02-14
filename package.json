@@ -1,5 +1,33 @@
 {
+  "name": "onlinestore",
+  "version": "1.0.0",
+  "description": "",
+  "homepage": "https://github.com/AsemDiab/OnlineStore#readme",
+  "bugs": {
+    "url": "https://github.com/AsemDiab/OnlineStore/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AsemDiab/OnlineStore.git"
+  },
+  "license": "ISC",
+  "author": "",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "test": "node tests/run-all-tests.js",
+    "test:product": "node tests/Product.test.js",
+    "test:inventory": "node tests/Inventory.test.js",
+    "test:cart": "node tests/Cart.test.js",
+    "test:creditcard": "node tests/CreditCard.test.js",
+    "test:customer": "node tests/Customer.test.js",
+    "test:store": "node tests/Store.test.js",
+    "test:system": "node tests/System.test.js",
+    "build": "npx tsc"
+  },
   "devDependencies": {
-    "typescript": "^5.9.3"
+    "@types/jest": "^30.0.0",
+    "jest": "^30.2.0",
+    "ts-jest": "^29.4.6"
   }
 }

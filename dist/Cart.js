@@ -1,43 +1,57 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.Cart = void 0;
-exports.displayCart = displayCart;
-class Cart {
-    constructor() {
-        this.cart = {};
+export class Cart {
+    constructor(quantityValidator) {
+        if (!quantityValidator)
+            throw new Error("the quantityValidator should be provided");
+        this.quantityValidator = quantityValidator;
+        this.cart = new Map();
+    }
+    containsProduct(product) {
+        return this.cart.has(product.id);
     }
     addToCart(product, qty) {
-        var _a;
-        if (qty <= 0) {
-            throw new Error("Quantity must be greater than 0");
+        if (!this.quantityValidator.validate(qty)) {
+            throw new Error("Quantity must be greater than 0 (positive)");
         }
-        this.cart[product.id] = {
-            product,
-            qty: (((_a = this.cart[product.id]) === null || _a === void 0 ? void 0 : _a.qty) || 0) + qty
-        };
+        this.setQuantity(product, this.getQuantity(product.id) + qty);
+        return true;
     }
     removeFromCart(product, qty) {
-        const productRecord = this.cart[product.id];
-        if (!productRecord)
+        if (!this.quantityValidator.validate(qty)) {
+            throw new Error("Quantity must be greater than 0 (positive)");
+        }
+        if (!this.containsProduct(product)) {
             throw new Error("The product not in cart");
-        if (productRecord.qty < qty)
+        }
+        if (this.getQuantity(product.id) < qty)
             throw new Error("The quantity of product in cart is less than the quantity needed for remove");
-        if (productRecord.qty == qty)
-            delete this.cart[product.id];
+        if (this.getQuantity(product.id) == qty)
+            this.setQuantity(product, 0);
         else
-            this.cart[product.id].qty -= qty;
+            this.setQuantity(product, this.getQuantity(product.id) - qty);
+        return true;
     }
     get cartContent() {
-        return this.cart;
+        return Object.fromEntries(this.cart.entries());
     }
     clearCart() {
-        this.cart = {};
+        this.cart.clear();
+        return true;
+    }
+    setQuantity(product, qty) {
+        if (qty === 0) {
+            this.cart.delete(product.id);
+        }
+        else {
+            this.cart.set(product.id, { product, qty });
+        }
+    }
+    getQuantity(productId) {
+        return this.cart.get(productId)?.qty || 0;
     }
 }
-exports.Cart = Cart;
-function displayCart(cart) {
+export function displayCart(cart) {
     console.log("++++++++Cart+++++++++");
-    Object.values(cart).forEach(record => {
+    Object.values(cart).forEach((record) => {
         console.log(`${record.product.name}:${record.qty} \n`);
     });
 }
