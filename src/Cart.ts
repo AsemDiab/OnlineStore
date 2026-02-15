@@ -1,25 +1,30 @@
+import { IProductCollection } from "./IProductCollection";
 import { NumericalValidator } from "./NumericalValidator";
 import { Product } from "./Product";
 
 export class Cart {
-  private cart: Map<number, { product: Product; qty: number }>;
   private quantityValidator: NumericalValidator;
-  constructor(quantityValidator: NumericalValidator) {
-    if (!quantityValidator)
-      throw new Error("the quantityValidator should be provided");
+  private storageManager: IProductCollection;
+  constructor(
+    storageManager: IProductCollection,
+    quantityValidator: NumericalValidator,
+  ) {
     this.quantityValidator = quantityValidator;
-    this.cart = new Map();
+    this.storageManager = storageManager;
   }
 
   containsProduct(product: Product): boolean {
-    return this.cart.has(product.id);
+    return this.storageManager.getQuantity(product) !== 0;
   }
 
   addToCart(product: Product, qty: number): boolean {
     if (!this.quantityValidator.validate(qty)) {
       throw new Error("Quantity must be greater than 0 (positive)");
     }
-    this.setQuantity(product, this.getQuantity(product.id) + qty);
+    this.storageManager.setQuantity(
+      product,
+      this.storageManager.getQuantity(product) + qty,
+    );
     return true;
   }
   removeFromCart(product: Product, qty: number): boolean {
@@ -29,41 +34,32 @@ export class Cart {
     if (!this.containsProduct(product)) {
       throw new Error("The product not in cart");
     }
-    if (this.getQuantity(product.id) < qty)
+    if (this.storageManager.getQuantity(product) < qty)
       throw new Error(
         "The quantity of product in cart is less than the quantity needed for remove",
       );
-    if (this.getQuantity(product.id) == qty) this.setQuantity(product, 0);
-    else this.setQuantity(product, this.getQuantity(product.id) - qty);
+    if (this.storageManager.getQuantity(product) == qty)
+      this.storageManager.setQuantity(product, 0);
+    else
+      this.storageManager.setQuantity(
+        product,
+        this.storageManager.getQuantity(product) - qty,
+      );
     return true;
   }
-  get cartContent(): Record<number, { product: Product; qty: number }> {
-    return Object.fromEntries(this.cart.entries());
+  get cartContent(): { product: Product; qty: number }[] {
+    return this.storageManager.storageContent;
   }
 
   clearCart(): boolean {
-    this.cart.clear();
+    this.storageManager.clear();
     return true;
   }
-
-  private setQuantity(product: Product, qty: number): void {
-    if (qty === 0) {
-      this.cart.delete(product.id);
-    } else {
-      this.cart.set(product.id, { product, qty });
-    }
+  getProduct(product: Product): { product: Product; qty: number } {
+    if (!this.storageManager.getItem(product.id)) throw new Error("x");
+    return {
+      product: product,
+      qty: this.storageManager.getQuantity(product),
+    };
   }
-
-  private getQuantity(productId: number): number {
-    return this.cart.get(productId)?.qty || 0;
-  }
-}
-
-export function displayCart(
-  cart: Record<number, { product: Product; qty: number }>,
-): void {
-  console.log("++++++++Cart+++++++++");
-  Object.values(cart).forEach((record) => {
-    console.log(`${record.product.name}:${record.qty} \n`);
-  });
 }

@@ -1,26 +1,26 @@
+import { IProductCollection } from "./IProductCollection";
 import { NumericalValidator } from "./NumericalValidator";
 import { Product } from "./Product";
 export class Inventory {
-  private inventory: Map<number, { product: Product; qty: number }>;
   private quantityValidator: NumericalValidator;
+  private storageManager: IProductCollection;
 
-  constructor(quantityValidator: NumericalValidator) {
-    this.inventory = new Map<number, { product: Product; qty: number }>();
+  constructor(
+    storageManager: IProductCollection,
+    quantityValidator: NumericalValidator,
+  ) {
     this.quantityValidator = quantityValidator;
+    this.storageManager = storageManager;
   }
 
-  private setQuantity(product: Product, qty: number): void {
-    if (qty === 0) {
-      this.inventory.delete(product.id);
-    } else {
-      this.inventory.set(product.id, { product, qty });
-    }
-  }
   addToInventory(product: Product, qty: number): boolean {
     if (!this.quantityValidator.validate(qty))
       throw new Error("the quantity should be positive");
 
-    this.setQuantity(product, this.getCount(product) + qty);
+    this.storageManager.setQuantity(
+      product,
+      this.storageManager.getQuantity(product) + qty,
+    );
     return true;
   }
   removeFromInventory(product: Product, qty: number): boolean {
@@ -33,28 +33,26 @@ export class Inventory {
       );
     }
 
-    this.setQuantity(product, this.getCount(product) - qty);
+    this.storageManager.setQuantity(
+      product,
+      this.storageManager.getQuantity(product) - qty,
+    );
     return true;
-  }
-
-  getCount(product: Product): number {
-    return this.inventory.get(product.id)?.qty ?? 0;
   }
 
   checkAvailability(product: Product, qty: number): boolean {
     if (!this.quantityValidator.validate(qty))
       throw new Error("the quantity should be positive");
 
-    if (qty > this.getCount(product)) return false;
+    if (qty > this.storageManager.getQuantity(product)) return false;
     return true;
   }
 
   get inventoryContent(): { product: Product; qty: number }[] {
-    return Array.from(this.inventory.entries()).map(
-      ([id, { product, qty }]) => ({
-        product,
-        qty,
-      }),
-    );
+    return this.storageManager.storageContent;
+  }
+
+  getCount(product: Product): number {
+    return this.storageManager.getQuantity(product);
   }
 }
