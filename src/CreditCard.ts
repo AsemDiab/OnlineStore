@@ -56,5 +56,9 @@ export class CreditCard implements Payment {
   }
   setBalance(balance: number) {
     this.validateBalance(balance);
+    this.balance = balance;
+  }
+  get creditCardInfo(): CreditCardInfo {
+    return this.cardInfo;
   }
 }

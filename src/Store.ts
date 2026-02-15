@@ -1,5 +1,5 @@
 import { Product } from "./Product";
-import { Cart, displayCart } from "./Cart";
+import { Cart } from "./Cart";
 import { Inventory } from "./Inventory";
 import { User } from "./User";
 import { Payment } from "./Payment";
@@ -60,7 +60,7 @@ export class Store {
       throw new Error("The total is larger than money that you have");
     } else console.log("Checkout succeeded");
 
-    Object.values(cartContent).forEach((record) => {
+    cartContent.forEach((record) => {
       this.removeFromInventory(record.product, record.qty);
     });
 
@@ -78,20 +78,18 @@ export class Store {
   addToCart(product: Product, qty: number): boolean {
     if (!product)
       throw new Error("product and quantity shouldn't be null or undefined");
-    if (!this.inventory.checkAvailability(product, qty ?? 0)) {
+    if (!this.inventory.checkAvailability(product, qty)) {
       throw new Error(`should not add to cart when inventory unavailable`);
     }
     return this.cart.addToCart(product, qty);
   }
 
   removeFromCart(product: Product, qty: number): boolean {
-    if (!product || !qty)
-      throw new Error("product and quntity shouldn't to be null or undefined");
-    if (!this.cart.cartContent[product.id]) {
+    if (!this.cart.containsProduct(product)) {
       console.log(`**the product ${product.name} is not in cart`);
       return false;
     }
-    if (this.cart.cartContent[product.id].qty < qty) {
+    if (this.cart.getProduct(product).qty < qty) {
       console.log(
         `**the quantity of ${product.name} in cart is less than ${qty}`,
       );

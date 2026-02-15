@@ -7,12 +7,10 @@ export class Product {
   private _id: number;
 
   constructor(
-    _name: string = "",
-    _price: number = 0,
+    _name: string,
+    _price: number,
     priceValidator: NumericalValidator,
   ) {
-    if (!priceValidator)
-      throw new Error("the priceValidator shouldn't be null or undefiend");
     if (!priceValidator.validate(_price))
       throw new Error("the price should be positive");
     this._name = _name;

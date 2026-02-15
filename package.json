@@ -15,14 +15,9 @@
   "type": "module",
   "main": "index.js",
   "scripts": {
-    "test": "node tests/run-all-tests.js",
-    "test:product": "node tests/Product.test.js",
-    "test:inventory": "node tests/Inventory.test.js",
-    "test:cart": "node tests/Cart.test.js",
-    "test:creditcard": "node tests/CreditCard.test.js",
-    "test:customer": "node tests/Customer.test.js",
-    "test:store": "node tests/Store.test.js",
-    "test:system": "node tests/System.test.js",
+     "test": "jest",
+  "test:watch": "jest --watch",
+  "test:coverage": "jest --coverage",
     "build": "npx tsc"
   },
   "devDependencies": {
