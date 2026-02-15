@@ -1,10 +1,10 @@
-import { Store } from "./Store.js";
-import { Product } from "./Product.js";
-import { Cart, displayCart } from "./Cart.js";
-import { CreditCardInfo, CreditCard } from "./CreditCard.js";
-import { QuantityValidator } from "./QuantityValidator.js";
-import { Inventory } from "./Inventory.js";
-import { PriceValidator } from "./PriceValidator.js";
+import { Store } from "./Store";
+import { Product } from "./Product";
+import { Cart, displayCart } from "./Cart";
+import { CreditCardInfo, CreditCard } from "./CreditCard";
+import { QuantityValidator } from "./QuantityValidator";
+import { Inventory } from "./Inventory";
+import { PriceValidator } from "./PriceValidator";
 
 try {
   const cart = new Cart(new QuantityValidator());

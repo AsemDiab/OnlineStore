@@ -1,4 +1,4 @@
-import { NumericalValidator } from "./NumericalValidator.js";
+import { NumericalValidator } from "./NumericalValidator";
 
 export class PriceValidator implements NumericalValidator {
   private minPrice;

@@ -2,3 +2,7 @@
 /dist/__tests__
 /src/__tests__
 /tests
+./dist/*
+*/dist
+/package-lock.json
+/coverage

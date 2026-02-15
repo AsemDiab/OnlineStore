@@ -1,5 +1,5 @@
-import { User } from "./User.js"
-import { Cart } from "./Cart.js"
+import { User } from "./User";
+import { Cart } from "./Cart";
 export class Customer extends User {
   constructor() {
     super();
@@ -8,6 +8,4 @@ export class Customer extends User {
   getRole() {
     return "Customer";
   }
-
- 
 }
