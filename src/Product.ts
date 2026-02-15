@@ -1,4 +1,4 @@
-import { NumericalValidator } from "./NumericalValidator.js";
+import { NumericalValidator } from "./NumericalValidator";
 
 export class Product {
   private static productsCreated: number = 0;

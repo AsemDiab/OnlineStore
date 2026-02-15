@@ -1,5 +1,5 @@
-import { NumericalValidator } from "./NumericalValidator.js";
-import { Product } from "./Product.js";
+import { NumericalValidator } from "./NumericalValidator";
+import { Product } from "./Product";
 
 export class Cart {
   private cart: Map<number, { product: Product; qty: number }>;

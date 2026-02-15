@@ -1,8 +1,8 @@
-import { Product } from "./Product.js";
-import { Cart, displayCart } from "./Cart.js";
-import { Inventory } from "./Inventory.js";
-import { User } from "./User.js";
-import { Payment } from "./Payment.js";
+import { Product } from "./Product";
+import { Cart, displayCart } from "./Cart";
+import { Inventory } from "./Inventory";
+import { User } from "./User";
+import { Payment } from "./Payment";
 
 export class Store {
   private inventory: Inventory;
