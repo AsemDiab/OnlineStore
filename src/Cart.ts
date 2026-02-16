@@ -56,7 +56,6 @@ export class Cart {
     return true;
   }
   getProduct(product: Product): { product: Product; qty: number } {
-    if (!this.storageManager.getItem(product.id)) throw new Error("x");
     return {
       product: product,
       qty: this.storageManager.getQuantity(product),
