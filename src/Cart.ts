@@ -1,14 +1,12 @@
 import { getQuantity, setQuantity, storageContent } from "./common/MapUtils";
-import { IProductCollection } from "./IProductCollection";
-import { NumericalValidator } from "./NumericalValidator";
+import { isValidQuantity } from "./common/valiadtor";
+
 import { Product } from "./Product";
 import { StorageItem, StorageMap } from "./types/Inventory.types";
 
 export class Cart {
-  private quantityValidator: NumericalValidator;
   private storageManager: StorageMap;
-  constructor(quantityValidator: NumericalValidator) {
-    this.quantityValidator = quantityValidator;
+  constructor() {
     this.storageManager = new Map<number, StorageItem>();
   }
 
@@ -17,7 +15,7 @@ export class Cart {
   }
 
   addToCart(product: Product, qty: number): boolean {
-    if (!this.quantityValidator.validate(qty)) {
+    if (!isValidQuantity(qty)) {
       throw new Error("Quantity must be greater than 0 (positive)");
     }
     setQuantity(
@@ -28,7 +26,7 @@ export class Cart {
     return true;
   }
   removeFromCart(product: Product, qty: number): boolean {
-    if (!this.quantityValidator.validate(qty)) {
+    if (!isValidQuantity(qty)) {
       throw new Error("Quantity must be greater than 0 (positive)");
     }
     if (!this.containsProduct(product)) {

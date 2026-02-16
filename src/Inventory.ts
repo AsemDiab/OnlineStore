@@ -1,20 +1,18 @@
 import { getQuantity, setQuantity, storageContent } from "./common/MapUtils";
-import { IProductCollection } from "./IProductCollection";
-import { NumericalValidator } from "./NumericalValidator";
+import { isValidQuantity } from "./common/valiadtor";
+
 import { Product } from "./Product";
 import { StorageMap } from "./types/Inventory.types";
-import { StorageItem } from "./types/Inventory.types.js";
+import { StorageItem } from "./types/Inventory.types";
 export class Inventory {
-  private quantityValidator: NumericalValidator;
   private storageManager: StorageMap;
 
-  constructor(quantityValidator: NumericalValidator) {
-    this.quantityValidator = quantityValidator;
+  constructor() {
     this.storageManager = new Map<number, StorageItem>();
   }
 
   addToInventory(product: Product, qty: number): boolean {
-    if (!this.quantityValidator.validate(qty))
+    if (!isValidQuantity(qty))
       throw new Error("the quantity should be positive");
 
     setQuantity(
@@ -25,7 +23,7 @@ export class Inventory {
     return true;
   }
   removeFromInventory(product: Product, qty: number): boolean {
-    if (!this.quantityValidator.validate(qty))
+    if (!isValidQuantity(qty))
       throw new Error("the quantity should be positive");
 
     if (!this.checkAvailability(product, qty)) {
@@ -43,7 +41,7 @@ export class Inventory {
   }
 
   checkAvailability(product: Product, qty: number): boolean {
-    if (!this.quantityValidator.validate(qty))
+    if (!isValidQuantity(qty))
       throw new Error("the quantity should be positive");
 
     if (qty > getQuantity(this.storageManager, product)) return false;

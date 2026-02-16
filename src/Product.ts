@@ -1,4 +1,4 @@
-import { NumericalValidator } from "./NumericalValidator";
+import { isValidPrice } from "./common/valiadtor";
 
 export class Product {
   private static productsCreated: number = 0;
@@ -6,13 +6,8 @@ export class Product {
   private _price: number;
   private _id: number;
 
-  constructor(
-    _name: string,
-    _price: number,
-    priceValidator: NumericalValidator,
-  ) {
-    if (!priceValidator.validate(_price))
-      throw new Error("the price should be positive");
+  constructor(_name: string, _price: number) {
+    if (!isValidPrice(_price)) throw new Error("the price should be positive");
     this._name = _name;
     this._price = _price;
     this._id = Product.productsCreated++;
