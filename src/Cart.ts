@@ -1,29 +1,29 @@
+import { getQuantity, setQuantity, storageContent } from "./common/MapUtils";
 import { IProductCollection } from "./IProductCollection";
 import { NumericalValidator } from "./NumericalValidator";
 import { Product } from "./Product";
+import { StorageItem, StorageMap } from "./types/Inventory.types";
 
 export class Cart {
   private quantityValidator: NumericalValidator;
-  private storageManager: IProductCollection;
-  constructor(
-    storageManager: IProductCollection,
-    quantityValidator: NumericalValidator,
-  ) {
+  private storageManager: StorageMap;
+  constructor(quantityValidator: NumericalValidator) {
     this.quantityValidator = quantityValidator;
-    this.storageManager = storageManager;
+    this.storageManager = new Map<number, StorageItem>();
   }
 
   containsProduct(product: Product): boolean {
-    return this.storageManager.getQuantity(product) !== 0;
+    return getQuantity(this.storageManager, product) !== 0;
   }
 
   addToCart(product: Product, qty: number): boolean {
     if (!this.quantityValidator.validate(qty)) {
       throw new Error("Quantity must be greater than 0 (positive)");
     }
-    this.storageManager.setQuantity(
+    setQuantity(
+      this.storageManager,
       product,
-      this.storageManager.getQuantity(product) + qty,
+      getQuantity(this.storageManager, product) + qty,
     );
     return true;
   }
@@ -34,21 +34,22 @@ export class Cart {
     if (!this.containsProduct(product)) {
       throw new Error("The product not in cart");
     }
-    if (this.storageManager.getQuantity(product) < qty)
+    if (getQuantity(this.storageManager, product) < qty)
       throw new Error(
         "The quantity of product in cart is less than the quantity needed for remove",
       );
-    if (this.storageManager.getQuantity(product) == qty)
-      this.storageManager.setQuantity(product, 0);
+    if (getQuantity(this.storageManager, product) == qty)
+      setQuantity(this.storageManager, product, 0);
     else
-      this.storageManager.setQuantity(
+      setQuantity(
+        this.storageManager,
         product,
-        this.storageManager.getQuantity(product) - qty,
+        getQuantity(this.storageManager, product) - qty,
       );
     return true;
   }
   get cartContent(): { product: Product; qty: number }[] {
-    return this.storageManager.storageContent;
+    return storageContent(this.storageManager);
   }
 
   clearCart(): boolean {
@@ -58,7 +59,7 @@ export class Cart {
   getProduct(product: Product): { product: Product; qty: number } {
     return {
       product: product,
-      qty: this.storageManager.getQuantity(product),
+      qty: getQuantity(this.storageManager, product),
     };
   }
 }

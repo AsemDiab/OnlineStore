@@ -16,13 +16,18 @@ export class Store {
 
   addToInventory(product: Product, qty: number): boolean {
     this.inventory.addToInventory(product, qty);
-    //not Finised yet
     return true;
   }
 
-  removeFromInventory(product: Product, qty: number): void {
-    const result = this.inventory.removeFromInventory(product, qty);
-    console.log("removing proccess " + (result ? "succeeded" : "failed"));
+  removeFromInventory(product: Product, qty: number): boolean {
+    try {
+      this.inventory.removeFromInventory(product, qty);
+      console.log("removing proccess succeeded");
+      return true;
+    } catch {
+      console.log("removing proccess failed");
+      return false;
+    }
   }
 
   addUser(user: User): boolean {
@@ -43,6 +48,7 @@ export class Store {
         );
       }
     });
+    //use reduce
 
     return { isValid: issues.length === 0, issues };
   }

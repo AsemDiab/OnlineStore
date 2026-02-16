@@ -1,37 +1,37 @@
-import { Store } from "./Store";
-import { Product } from "./Product";
-import { Cart, displayCart } from "./Cart";
-import { CreditCardInfo, CreditCard } from "./CreditCard";
-import { QuantityValidator } from "./QuantityValidator";
-import { Inventory } from "./Inventory";
-import { PriceValidator } from "./PriceValidator";
+// import { Store } from "./Store";
+// import { Product } from "./Product";
+// import { Cart, displayCart } from "./Cart";
+// import { CreditCardInfo, CreditCard } from "./CreditCard";
+// import { QuantityValidator } from "./QuantityValidator";
+// import { Inventory } from "./Inventory";
+// import { PriceValidator } from "./PriceValidator";
 
-try {
-  const cart = new Cart(new QuantityValidator());
-  const user1 = new Store(cart, new Inventory(new QuantityValidator()));
-  const priceVaildator = new PriceValidator(0);
-  const Iphone15 = new Product("Iphone15", 500, priceVaildator);
-  const ds554HV = new Product("ds554HV", 15, priceVaildator);
-  const Mouse = new Product("MArvo Mouse", 5, priceVaildator);
+// try {
+//   const cart = new Cart(new QuantityValidator());
+//   const user1 = new Store(cart, new Inventory(new QuantityValidator()));
+//   const priceVaildator = new PriceValidator(0);
+//   const Iphone15 = new Product("Iphone15", 500, priceVaildator);
+//   const ds554HV = new Product("ds554HV", 15, priceVaildator);
+//   const Mouse = new Product("MArvo Mouse", 5, priceVaildator);
 
-  user1.addToInventory(Iphone15, 3);
-  user1.addToInventory(ds554HV, 5);
-  user1.addToInventory(Mouse, 2);
+//   user1.addToInventory(Iphone15, 3);
+//   user1.addToInventory(ds554HV, 5);
+//   user1.addToInventory(Mouse, 2);
 
-  cart.addToCart(Iphone15, 20);
+//   cart.addToCart(Iphone15, 20);
 
-  const cardInfo = new CreditCardInfo(
-    "4242 4242 4242 4242",
-    "Asem Diab",
-    new Date(2026, 11, 5),
-    "123",
-  );
+//   const cardInfo = new CreditCardInfo(
+//     "4242 4242 4242 4242",
+//     "Asem Diab",
+//     new Date(2026, 11, 5),
+//     "123",
+//   );
 
-  const card = new CreditCard(cardInfo, 1000);
+//   const card = new CreditCard(cardInfo, 1000);
 
-  displayCart(cart.cartContent);
-  user1.checkout(card);
-  displayCart(cart.cartContent);
-} catch {
-  console.error("an Error caught");
-}
+//   displayCart(cart.cartContent);
+//   user1.checkout(card);
+//   displayCart(cart.cartContent);
+// } catch {
+//   console.error("an Error caught");
+// }

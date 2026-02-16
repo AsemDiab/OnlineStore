@@ -1,25 +1,26 @@
+import { getQuantity, setQuantity, storageContent } from "./common/MapUtils";
 import { IProductCollection } from "./IProductCollection";
 import { NumericalValidator } from "./NumericalValidator";
 import { Product } from "./Product";
+import { StorageMap } from "./types/Inventory.types";
+import { StorageItem } from "./types/Inventory.types.js";
 export class Inventory {
   private quantityValidator: NumericalValidator;
-  private storageManager: IProductCollection;
+  private storageManager: StorageMap;
 
-  constructor(
-    storageManager: IProductCollection,
-    quantityValidator: NumericalValidator,
-  ) {
+  constructor(quantityValidator: NumericalValidator) {
     this.quantityValidator = quantityValidator;
-    this.storageManager = storageManager;
+    this.storageManager = new Map<number, StorageItem>();
   }
 
   addToInventory(product: Product, qty: number): boolean {
     if (!this.quantityValidator.validate(qty))
       throw new Error("the quantity should be positive");
 
-    this.storageManager.setQuantity(
+    setQuantity(
+      this.storageManager,
       product,
-      this.storageManager.getQuantity(product) + qty,
+      getQuantity(this.storageManager, product) + qty,
     );
     return true;
   }
@@ -33,9 +34,10 @@ export class Inventory {
       );
     }
 
-    this.storageManager.setQuantity(
+    setQuantity(
+      this.storageManager,
       product,
-      this.storageManager.getQuantity(product) - qty,
+      getQuantity(this.storageManager, product) - qty,
     );
     return true;
   }
@@ -44,15 +46,15 @@ export class Inventory {
     if (!this.quantityValidator.validate(qty))
       throw new Error("the quantity should be positive");
 
-    if (qty > this.storageManager.getQuantity(product)) return false;
+    if (qty > getQuantity(this.storageManager, product)) return false;
     return true;
   }
 
   get inventoryContent(): { product: Product; qty: number }[] {
-    return this.storageManager.storageContent;
+    return storageContent(this.storageManager);
   }
 
   getCount(product: Product): number {
-    return this.storageManager.getQuantity(product);
+    return getQuantity(this.storageManager, product);
   }
 }
