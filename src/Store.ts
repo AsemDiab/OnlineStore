@@ -53,6 +53,7 @@ export class Store {
       isValid =
         isValid && this.inventory.checkAvailability(record.product, record.qty);
     });
+    //use reduce
 
     return isValid;
   }
