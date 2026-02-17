@@ -3,6 +3,7 @@ import { Cart } from "./Cart";
 import { Inventory } from "./Inventory";
 import { User } from "./User";
 import { Payment } from "./Payment";
+import { StorageItem } from "./types/Inventory.types.js";
 
 export class Store {
   private inventory: Inventory;
@@ -35,27 +36,30 @@ export class Store {
     return true;
   }
 
-  private validateInventoryAvailability(cart: Cart): {
-    isValid: boolean;
-    issues: string[];
-  } {
+  private validateInventoryAvailabilityWithReduce(cart: Cart): boolean {
+    const values = Object.values(cart.cartContent) as StorageItem[];
+    return values.reduce(
+      (isValid, record: StorageItem) =>
+        isValid && this.inventory.checkAvailability(record.product, record.qty),
+
+      true,
+    ) as boolean;
+  }
+  private validateInventoryAvailability(cart: Cart): boolean {
     const issues: string[] = [];
 
+    let isValid = true;
     Object.values(cart.cartContent).forEach((record) => {
-      if (!this.inventory.checkAvailability(record.product, record.qty)) {
-        issues.push(
-          `**the count of ${record.product.name} in inventory is less than ${record.qty}`,
-        );
-      }
+      isValid =
+        isValid && this.inventory.checkAvailability(record.product, record.qty);
     });
-    //use reduce
 
-    return { isValid: issues.length === 0, issues };
+    return isValid;
   }
 
   checkout(payment: Payment): void {
     const cartContent = this.cart.cartContent;
-    const { isValid, issues } = this.validateInventoryAvailability(this.cart);
+    const isValid = this.validateInventoryAvailability(this.cart);
     if (!isValid) {
       throw new Error("One or more products are not available in inventory");
     }
@@ -76,9 +80,10 @@ export class Store {
 
   private calculateTotal(cart: Cart): number {
     return Object.values(cart.cartContent).reduce(
-      (total, record) => total + record.product.price * record.qty,
+      (total: number, record: StorageItem) =>
+        total + record.product.price * record.qty,
       0,
-    );
+    ) as number;
   }
 
   addToCart(product: Product, qty: number): boolean {
