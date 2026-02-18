@@ -41,7 +41,7 @@ export class Store {
   } {
     const issues: string[] = [];
 
-    Object.values(cart.cartContent).forEach((record) => {
+    (Object.values(cart.cartContent) as { product: Product; qty: number }[]).forEach((record:{product: Product, qty: number}) => {
       if (!this.inventory.checkAvailability(record.product, record.qty)) {
         issues.push(
           `**the count of ${record.product.name} in inventory is less than ${record.qty}`,
@@ -66,7 +66,7 @@ export class Store {
       throw new Error("The total is larger than money that you have");
     } else console.log("Checkout succeeded");
 
-    cartContent.forEach((record) => {
+    cartContent.forEach((record:{product: Product, qty: number}) => {
       this.removeFromInventory(record.product, record.qty);
     });
 
@@ -75,10 +75,10 @@ export class Store {
   }
 
   private calculateTotal(cart: Cart): number {
-    return Object.values(cart.cartContent).reduce(
-      (total, record) => total + record.product.price * record.qty,
+    return (Object.values(cart.cartContent) as { product: Product; qty: number }[]).reduce(
+      (total: number, record: { product: Product; qty: number }) => total + record.product.price * record.qty,
       0,
-    );
+    ) as number;
   }
 
   addToCart(product: Product, qty: number): boolean {
